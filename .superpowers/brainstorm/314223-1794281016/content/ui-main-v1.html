@@ -1,0 +1,24 @@
+<h2>Preview UI ST7789 240×240</h2>
+<p class="subtitle">Simulasi main1–main5 berdasarkan uiMain.h. Klik layar untuk melihat pilihan.</p>
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">MAIN 1 — Home</div>
+    <div style="width:240px;height:240px;background:#26324a;color:white;position:relative;border:3px solid #777;font-family:monospace;margin:auto">
+      <div style="position:absolute;left:13px;top:6px;width:215px;height:37px;border:2px solid #fff;display:flex;align-items:center;justify-content:center;color:#ffdf5d;letter-spacing:5px">▂▅▇▃▆▁▇▅▂▆▇</div>
+      <div style="position:absolute;left:12px;top:70px;font-size:28px">03</div>
+      <div style="position:absolute;left:163px;top:82px;font-size:24px">07</div>
+      <div style="position:absolute;left:8px;top:112px;font-size:20px">042</div>
+      <div style="position:absolute;left:11px;top:162px;font-size:28px">150</div>
+      <div style="position:absolute;left:12px;bottom:12px;color:#9ab5ff">MEMORY&nbsp;&nbsp; CP&nbsp;&nbsp; STEP&nbsp;&nbsp; STOP</div>
+    </div>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">Navigation</div>
+    <div class="options">
+      <div class="option" data-choice="main2-planning" onclick="toggleSelect(this)"><div class="letter">A</div><div class="content"><h3>MAIN2 + ENTER</h3><p>Planning editor: Memory 0–15, StepPlan 0–149</p></div></div>
+      <div class="option" data-choice="main3-run" onclick="toggleSelect(this)"><div class="letter">B</div><div class="content"><h3>MAIN3 + ENTER</h3><p>Run selected memory from checkpoint</p></div></div>
+      <div class="option" data-choice="main5-back" onclick="toggleSelect(this)"><div class="letter">C</div><div class="content"><h3>MAIN5 + BACK</h3><p>Open Config screen</p></div></div>
+    </div>
+  </div>
+</div>
+<div class="section"><h3>Editor flow</h3><p>Memory → StepPlan → parameter → automatic save after 300 ms. New StepPlan defaults to FINISH, IGN, speed 0.</p></div>

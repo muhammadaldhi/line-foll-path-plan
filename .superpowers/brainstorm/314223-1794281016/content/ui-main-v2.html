@@ -1,0 +1,37 @@
+<h2>UI asli dari uiMain.h + kontrol 6 tombol</h2>
+<p class="subtitle">Bitmap PNG dikonversi langsung dari array RGB565 240×240. Tombol mensimulasikan UP, DOWN, PLUS, MINUS, ENTER, BACK.</p>
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">ST7789 preview — MAIN1</div>
+    <div style="background:#111;padding:14px;text-align:center"><img id="screen" src="/files/mockups/main1.png" width="240" height="240" style="image-rendering:pixelated;border:2px solid #777"></div>
+    <p id="status" style="text-align:center">MAIN1 · Memory 00 · CP 00 · Step 000 · Stop 150</p>
+  </div>
+  <div class="mockup">
+    <div class="mockup-header">6 tombol kontrol</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <button class="mock-button" onclick="press('UP')">UP</button>
+      <button class="mock-button" onclick="press('DOWN')">DOWN</button>
+      <button class="mock-button" onclick="press('PLUS')">PLUS</button>
+      <button class="mock-button" onclick="press('MINUS')">MINUS</button>
+      <button class="mock-button" onclick="press('ENTER')">ENTER</button>
+      <button class="mock-button" onclick="press('BACK')">BACK</button>
+    </div>
+    <div class="section"><h3>Kontrol</h3><p>UP/DOWN pindah main. PLUS/MINUS ubah nilai aktif. ENTER masuk Planning atau jalankan checkpoint. BACK kembali atau buka Config dari MAIN5.</p></div>
+    <div class="section"><h3>Flow</h3><p id="flow">MAIN1 → DOWN → MAIN2 → ENTER → PLANNING</p></div>
+  </div>
+</div>
+<script>
+let main=1, memory=0, cp=0, step=0, stop=150;
+const names=['','main1','main2','main3','main4','main5'];
+function render(){document.getElementById('screen').src='/files/mockups/'+names[main]+'.png';document.getElementById('status').textContent=`MAIN${main} · Memory ${String(memory).padStart(2,'0')} · CP ${String(cp).padStart(2,'0')} · Step ${String(step).padStart(3,'0')} · Stop ${stop}`;}
+function press(k){
+ if(k==='UP') main=main===1?5:main-1;
+ if(k==='DOWN') main=main===5?1:main+1;
+ if(k==='PLUS'){if(main===2)memory=Math.min(15,memory+1);if(main===3)cp=Math.min(29,cp+1);if(main===4)step=Math.min(149,step+1);if(main===5)stop=Math.min(150,stop+1);}
+ if(k==='MINUS'){if(main===2)memory=Math.max(0,memory-1);if(main===3)cp=Math.max(0,cp-1);if(main===4)step=Math.max(0,step-1);if(main===5)stop=Math.max(0,stop-1);}
+ if(k==='ENTER') document.getElementById('flow').textContent=main===2?'MAIN2 → PLANNING':main===3?'MAIN3 → RUN CHECKPOINT':'ENTER on MAIN'+main;
+ if(k==='BACK') document.getElementById('flow').textContent=main===5?'MAIN5 → CONFIG':'BACK on MAIN'+main;
+ render();
+}
+render();
+</script>

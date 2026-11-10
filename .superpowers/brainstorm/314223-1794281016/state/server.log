@@ -1,0 +1,32 @@
+{"type":"server-started","port":50107,"host":"127.0.0.1","url_host":"localhost","url":"http://localhost:50107/?key=b97176099227e338edad184125bb845724bf19cfbe4c4d95434d12b9feb869aa","screen_dir":"/home/alwi/Documents/line-foll/.superpowers/brainstorm/314223-1794281016/content","state_dir":"/home/alwi/Documents/line-foll/.superpowers/brainstorm/314223-1794281016/state","idle_timeout_ms":14400000}
+{"type":"screen-added","file":"/home/alwi/Documents/line-foll/.superpowers/brainstorm/314223-1794281016/content/ui-main-v1.html"}
+{"source":"user-event","type":"click","text":"AMAIN2 + ENTERPlanning editor: Memory 0–15, StepPlan 0–149","choice":"main2-planning","id":null,"timestamp":1794281039853}
+{"source":"user-event","type":"click","text":"BMAIN3 + ENTERRun selected memory from checkpoint","choice":"main3-run","id":null,"timestamp":1794281040625}
+{"source":"user-event","type":"click","text":"CMAIN5 + BACKOpen Config screen","choice":"main5-back","id":null,"timestamp":1794281041529}
+{"source":"user-event","type":"click","text":"AMAIN2 + ENTERPlanning editor: Memory 0–15, StepPlan 0–149","choice":"main2-planning","id":null,"timestamp":1794281042272}
+{"source":"user-event","type":"click","text":"BMAIN3 + ENTERRun selected memory from checkpoint","choice":"main3-run","id":null,"timestamp":1794281048745}
+{"source":"user-event","type":"click","text":"CMAIN5 + BACKOpen Config screen","choice":"main5-back","id":null,"timestamp":1794281049385}
+{"source":"user-event","type":"click","text":"AMAIN2 + ENTERPlanning editor: Memory 0–15, StepPlan 0–149","choice":"main2-planning","id":null,"timestamp":1794281050411}
+{"source":"user-event","type":"click","text":"BMAIN3 + ENTERRun selected memory from checkpoint","choice":"main3-run","id":null,"timestamp":1794281053633}
+{"source":"user-event","type":"click","text":"CMAIN5 + BACKOpen Config screen","choice":"main5-back","id":null,"timestamp":1794281054137}
+{"source":"user-event","type":"click","text":"BMAIN3 + ENTERRun selected memory from checkpoint","choice":"main3-run","id":null,"timestamp":1794281055018}
+{"source":"user-event","type":"click","text":"AMAIN2 + ENTERPlanning editor: Memory 0–15, StepPlan 0–149","choice":"main2-planning","id":null,"timestamp":1794281055353}
+{"source":"user-event","type":"click","text":"AMAIN2 + ENTERPlanning editor: Memory 0–15, StepPlan 0–149","choice":"main2-planning","id":null,"timestamp":1794281071732}
+{"source":"user-event","type":"click","text":"BMAIN3 + ENTERRun selected memory from checkpoint","choice":"main3-run","id":null,"timestamp":1794281072257}
+{"source":"user-event","type":"click","text":"CMAIN5 + BACKOpen Config screen","choice":"main5-back","id":null,"timestamp":1794281073033}
+{"source":"user-event","type":"click","text":"AMAIN2 + ENTERPlanning editor: Memory 0–15, StepPlan 0–149","choice":"main2-planning","id":null,"timestamp":1794281073681}
+{"source":"user-event","type":"click","text":"BMAIN3 + ENTERRun selected memory from checkpoint","choice":"main3-run","id":null,"timestamp":1794281074961}
+{"source":"user-event","type":"click","text":"BMAIN3 + ENTERRun selected memory from checkpoint","choice":"main3-run","id":null,"timestamp":1794281075153}
+{"source":"user-event","type":"click","text":"AMAIN2 + ENTERPlanning editor: Memory 0–15, StepPlan 0–149","choice":"main2-planning","id":null,"timestamp":1794281075809}
+{"source":"user-event","type":"click","text":"BMAIN3 + ENTERRun selected memory from checkpoint","choice":"main3-run","id":null,"timestamp":1794281078273}
+{"source":"user-event","type":"click","text":"CMAIN5 + BACKOpen Config screen","choice":"main5-back","id":null,"timestamp":1794281079257}
+{"source":"user-event","type":"click","text":"AMAIN2 + ENTERPlanning editor: Memory 0–15, StepPlan 0–149","choice":"main2-planning","id":null,"timestamp":1794281079873}
+{"source":"user-event","type":"click","text":"AMAIN2 + ENTERPlanning editor: Memory 0–15, StepPlan 0–149","choice":"main2-planning","id":null,"timestamp":1794281237734}
+{"source":"user-event","type":"click","text":"BMAIN3 + ENTERRun selected memory from checkpoint","choice":"main3-run","id":null,"timestamp":1794281240595}
+{"source":"user-event","type":"click","text":"AMAIN2 + ENTERPlanning editor: Memory 0–15, StepPlan 0–149","choice":"main2-planning","id":null,"timestamp":1794281241157}
+{"source":"user-event","type":"click","text":"CMAIN5 + BACKOpen Config screen","choice":"main5-back","id":null,"timestamp":1794281241827}
+{"source":"user-event","type":"click","text":"BMAIN3 + ENTERRun selected memory from checkpoint","choice":"main3-run","id":null,"timestamp":1794281242332}
+{"source":"user-event","type":"click","text":"AMAIN2 + ENTERPlanning editor: Memory 0–15, StepPlan 0–149","choice":"main2-planning","id":null,"timestamp":1794281242723}
+{"type":"screen-added","file":"/home/alwi/Documents/line-foll/.superpowers/brainstorm/314223-1794281016/content/ui-main-v2.html"}
+{"type":"screen-added","file":"/home/alwi/Documents/line-foll/.superpowers/brainstorm/314223-1794281016/content/ui-main-v3.html"}
+{"type":"server-stopped","reason":"idle timeout"}
