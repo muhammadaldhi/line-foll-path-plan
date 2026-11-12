@@ -64,6 +64,26 @@ int main() {
     assert(to_underlying(getSensorPreset(SensorLogic::XOR_LEFT_6_RIGHT_6).maskA) == 0x3f00);
     assert(to_underlying(getSensorPreset(SensorLogic::XOR_LEFT_6_RIGHT_6).maskB) == 0x003f);
 
+    alwi.memory(0)
+        .step(1)
+        .forward(SensorLogic::XOR_CENTER_LEFT_4, 180, 180, 50)
+        .afterForward(225, 20)
+        .usePid(1)
+        .lineMode(LineColor::BLACK)
+        .stopAfterAction()
+        .save();
+
+    const StepPlan& configured = activeMemory().steps[1];
+    assert(configured.action == Action::MOVE_FWD);
+    assert(configured.sensorTriggerMode == SensorTriggerMode::XOR);
+    assert(to_underlying(configured.sensorMaskA) == 0x01e0);
+    assert(to_underlying(configured.sensorMaskB) == 0x000f);
+    assert(configured.leftSpeed == 180 && configured.rightSpeed == 180);
+    assert(configured.counterMode == CounterMode::TIMER && configured.counter == 50);
+    assert(configured.valueA == 225 && configured.counterA == 20);
+    assert(configured.pidProfile == 1);
+    assert(activeMemory().stopPlan == 2);
+
     initializeDefaultMemory(memory);
     PlannerRuntime runtime(memory);
     RuntimeInput input{};

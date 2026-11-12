@@ -62,6 +62,33 @@ struct RuntimeResult {
     uint16_t targetStep = 0;
 };
 
+enum class LineColor { BLACK = 0, WHITE = 1 };
+
+class RobotPlanner {
+public:
+    RobotPlanner();
+
+    RobotPlanner& pid(uint8_t profileIndex, int16_t kp, int16_t ki, int16_t kd);
+    RobotPlanner& memory(uint8_t memoryIndex);
+    RobotPlanner& step(uint16_t stepIndex);
+
+    RobotPlanner& forward(SensorLogic logic, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs);
+    RobotPlanner& forward(SensorTriggerMode mode, uint16_t maskA, uint16_t maskB, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs);
+
+    RobotPlanner& afterForward(int16_t speedAfter, uint32_t delay2Ms);
+    RobotPlanner& usePid(uint8_t profileIndex);
+    RobotPlanner& lineMode(LineColor color);
+
+    RobotPlanner& stopAfterAction();
+    RobotPlanner& save();
+
+private:
+    uint8_t currentMemory_ = 0;
+    uint16_t currentStep_ = 0;
+};
+
+extern RobotPlanner alwi;
+
 class PlannerRuntime {
 public:
     explicit PlannerRuntime(const MemoryProgram& memory);

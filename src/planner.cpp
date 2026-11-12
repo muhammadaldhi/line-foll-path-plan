@@ -1,4 +1,95 @@
 #include "planner.h"
+#include "menu.h"
+
+RobotPlanner alwi;
+
+RobotPlanner::RobotPlanner() : currentMemory_(0), currentStep_(0) {}
+
+RobotPlanner& RobotPlanner::memory(uint8_t memoryIndex) {
+    if (memoryIndex < MEMORY_COUNT) {
+        currentMemory_ = memoryIndex;
+        selectMemory(memoryIndex);
+    }
+    return *this;
+}
+
+RobotPlanner& RobotPlanner::step(uint16_t stepIndex) {
+    if (stepIndex < STEP_COUNT) {
+        currentStep_ = stepIndex;
+    }
+    return *this;
+}
+
+RobotPlanner& RobotPlanner::pid(uint8_t profileIndex, int16_t kp, int16_t ki, int16_t kd) {
+    if (profileIndex < 3 && currentStep_ < STEP_COUNT) {
+        MemoryProgram& mem = activeMemory();
+        mem.steps[currentStep_].pidProfile = profileIndex;
+        mem.steps[currentStep_].pidKi = ki;
+        (void)kp; (void)kd;
+        markMemoryDirty(0);
+    }
+    return *this;
+}
+
+RobotPlanner& RobotPlanner::forward(SensorLogic logic, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs) {
+    SensorPreset preset = getSensorPreset(logic);
+    return forward(preset.mode, to_underlying(preset.maskA), to_underlying(preset.maskB), leftSpeed, rightSpeed, delayMs);
+}
+
+RobotPlanner& RobotPlanner::forward(SensorTriggerMode mode, uint16_t maskA, uint16_t maskB, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs) {
+    if (currentStep_ < STEP_COUNT) {
+        MemoryProgram& mem = activeMemory();
+        StepPlan& plan = mem.steps[currentStep_];
+        plan.action = Action::MOVE_FWD;
+        plan.sensorTriggerMode = mode;
+        plan.sensorMaskA = static_cast<SensorMask>(maskA);
+        plan.sensorMaskB = static_cast<SensorMask>(maskB);
+        plan.leftSpeed = leftSpeed;
+        plan.rightSpeed = rightSpeed;
+        plan.counterMode = CounterMode::TIMER;
+        plan.counter = delayMs;
+        markMemoryDirty(0);
+    }
+    return *this;
+}
+
+RobotPlanner& RobotPlanner::afterForward(int16_t speedAfter, uint32_t delay2Ms) {
+    if (currentStep_ < STEP_COUNT) {
+        MemoryProgram& mem = activeMemory();
+        StepPlan& plan = mem.steps[currentStep_];
+        plan.valueA = speedAfter;
+        plan.counterA = delay2Ms;
+        plan.counterAMode = CounterMode::TIMER;
+        markMemoryDirty(0);
+    }
+    return *this;
+}
+
+RobotPlanner& RobotPlanner::usePid(uint8_t profileIndex) {
+    if (currentStep_ < STEP_COUNT) {
+        MemoryProgram& mem = activeMemory();
+        mem.steps[currentStep_].pidProfile = profileIndex;
+        markMemoryDirty(0);
+    }
+    return *this;
+}
+
+RobotPlanner& RobotPlanner::lineMode(LineColor color) {
+    (void)color;
+    return *this;
+}
+
+RobotPlanner& RobotPlanner::stopAfterAction() {
+    MemoryProgram& mem = activeMemory();
+    mem.stopPlan = currentStep_ + 1;
+    markMemoryDirty(0);
+    return *this;
+}
+
+RobotPlanner& RobotPlanner::save() {
+    flushPendingSave();
+    return *this;
+}
 
 bool shouldStopBeforeStep(const MemoryProgram& memory, uint16_t currentStep) {
     return memory.stopPlan < STEP_COUNT && currentStep >= memory.stopPlan;
