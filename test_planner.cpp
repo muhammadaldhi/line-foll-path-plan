@@ -53,6 +53,17 @@ int main() {
     assert(nextStepIndex(0) == 1);
     assert(nextStepIndex(149) == 150);
 
+    assert(getSensorPreset(SensorLogic::NONE).mode == SensorTriggerMode::NONE);
+    assert(getSensorPreset(SensorLogic::DIRECT).mode == SensorTriggerMode::DIRECT);
+    assert(to_underlying(getSensorPreset(SensorLogic::EQ_NONE).maskA) == 0x0000);
+    assert(to_underlying(getSensorPreset(SensorLogic::EQ_ALL).maskA) == 0x3fff);
+    assert(to_underlying(getSensorPreset(SensorLogic::OR_LEFT_4).maskA) == 0x000f);
+    assert(to_underlying(getSensorPreset(SensorLogic::OR_RIGHT_4).maskA) == 0x3c00);
+    assert(to_underlying(getSensorPreset(SensorLogic::XOR_CENTER_LEFT_4).maskA) == 0x01e0);
+    assert(to_underlying(getSensorPreset(SensorLogic::XOR_CENTER_LEFT_4).maskB) == 0x000f);
+    assert(to_underlying(getSensorPreset(SensorLogic::XOR_LEFT_6_RIGHT_6).maskA) == 0x3f00);
+    assert(to_underlying(getSensorPreset(SensorLogic::XOR_LEFT_6_RIGHT_6).maskB) == 0x003f);
+
     initializeDefaultMemory(memory);
     PlannerRuntime runtime(memory);
     RuntimeInput input{};

@@ -12,6 +12,66 @@ uint16_t nextStepIndex(uint16_t currentStep) {
     return static_cast<uint16_t>(currentStep + 1);
 }
 
+SensorPreset getSensorPreset(SensorLogic logic) {
+    switch (logic) {
+    case SensorLogic::NONE:
+        return {SensorTriggerMode::NONE, SensorMask::NONE, SensorMask::NONE};
+    case SensorLogic::DIRECT:
+        return {SensorTriggerMode::DIRECT, SensorMask::NONE, SensorMask::NONE};
+    case SensorLogic::EQ_NONE:
+        return {SensorTriggerMode::EQ, static_cast<SensorMask>(0x0000), SensorMask::NONE};
+    case SensorLogic::EQ_ALL:
+        return {SensorTriggerMode::EQ, static_cast<SensorMask>(0x3fff), SensorMask::NONE};
+    case SensorLogic::OR_LEFT_1:
+        return {SensorTriggerMode::OR, static_cast<SensorMask>(0x0001), SensorMask::NONE};
+    case SensorLogic::OR_LEFT_2:
+        return {SensorTriggerMode::OR, static_cast<SensorMask>(0x0003), SensorMask::NONE};
+    case SensorLogic::OR_LEFT_3:
+        return {SensorTriggerMode::OR, static_cast<SensorMask>(0x0007), SensorMask::NONE};
+    case SensorLogic::OR_LEFT_4:
+        return {SensorTriggerMode::OR, static_cast<SensorMask>(0x000f), SensorMask::NONE};
+    case SensorLogic::OR_RIGHT_1:
+        return {SensorTriggerMode::OR, static_cast<SensorMask>(0x2000), SensorMask::NONE};
+    case SensorLogic::OR_RIGHT_2:
+        return {SensorTriggerMode::OR, static_cast<SensorMask>(0x3000), SensorMask::NONE};
+    case SensorLogic::OR_RIGHT_3:
+        return {SensorTriggerMode::OR, static_cast<SensorMask>(0x3800), SensorMask::NONE};
+    case SensorLogic::OR_RIGHT_4:
+        return {SensorTriggerMode::OR, static_cast<SensorMask>(0x3c00), SensorMask::NONE};
+    case SensorLogic::OR_ALL:
+        return {SensorTriggerMode::OR, static_cast<SensorMask>(0x3fff), SensorMask::NONE};
+    case SensorLogic::XOR_CENTER_LEFT_1:
+        return {SensorTriggerMode::XOR, static_cast<SensorMask>(0x01e0), static_cast<SensorMask>(0x0001)};
+    case SensorLogic::XOR_CENTER_LEFT_2:
+        return {SensorTriggerMode::XOR, static_cast<SensorMask>(0x01e0), static_cast<SensorMask>(0x0003)};
+    case SensorLogic::XOR_CENTER_LEFT_3:
+        return {SensorTriggerMode::XOR, static_cast<SensorMask>(0x01e0), static_cast<SensorMask>(0x0007)};
+    case SensorLogic::XOR_CENTER_LEFT_4:
+        return {SensorTriggerMode::XOR, static_cast<SensorMask>(0x01e0), static_cast<SensorMask>(0x000f)};
+    case SensorLogic::XOR_CENTER_RIGHT_1:
+        return {SensorTriggerMode::XOR, static_cast<SensorMask>(0x01e0), static_cast<SensorMask>(0x2000)};
+    case SensorLogic::XOR_CENTER_RIGHT_2:
+        return {SensorTriggerMode::XOR, static_cast<SensorMask>(0x01e0), static_cast<SensorMask>(0x3000)};
+    case SensorLogic::XOR_CENTER_RIGHT_3:
+        return {SensorTriggerMode::XOR, static_cast<SensorMask>(0x01e0), static_cast<SensorMask>(0x3800)};
+    case SensorLogic::XOR_CENTER_RIGHT_4:
+        return {SensorTriggerMode::XOR, static_cast<SensorMask>(0x01e0), static_cast<SensorMask>(0x3c00)};
+    case SensorLogic::XOR_LEFT_1_RIGHT_1:
+        return {SensorTriggerMode::XOR, static_cast<SensorMask>(0x2000), static_cast<SensorMask>(0x0001)};
+    case SensorLogic::XOR_LEFT_2_RIGHT_2:
+        return {SensorTriggerMode::XOR, static_cast<SensorMask>(0x3000), static_cast<SensorMask>(0x0003)};
+    case SensorLogic::XOR_LEFT_3_RIGHT_3:
+        return {SensorTriggerMode::XOR, static_cast<SensorMask>(0x3800), static_cast<SensorMask>(0x0007)};
+    case SensorLogic::XOR_LEFT_4_RIGHT_4:
+        return {SensorTriggerMode::XOR, static_cast<SensorMask>(0x3c00), static_cast<SensorMask>(0x000f)};
+    case SensorLogic::XOR_LEFT_5_RIGHT_5:
+        return {SensorTriggerMode::XOR, static_cast<SensorMask>(0x3e00), static_cast<SensorMask>(0x001f)};
+    case SensorLogic::XOR_LEFT_6_RIGHT_6:
+        return {SensorTriggerMode::XOR, static_cast<SensorMask>(0x3f00), static_cast<SensorMask>(0x003f)};
+    }
+    return {SensorTriggerMode::NONE, SensorMask::NONE, SensorMask::NONE};
+}
+
 namespace {
 bool validMask(uint16_t mask) { return (mask & ~to_underlying(SensorMask::ALL)) == 0; }
 bool triggered(const StepPlan& step, uint16_t sensors) {

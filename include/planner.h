@@ -10,6 +10,24 @@ uint16_t nextStepIndex(uint16_t currentStep);
 
 enum class RuntimeStatus { RUNNING, FINISHED, EMERGENCY_STOP, FAULT };
 
+enum class SensorLogic {
+    NONE, DIRECT, EQ_NONE, EQ_ALL,
+    OR_LEFT_1, OR_LEFT_2, OR_LEFT_3, OR_LEFT_4,
+    OR_RIGHT_1, OR_RIGHT_2, OR_RIGHT_3, OR_RIGHT_4, OR_ALL,
+    XOR_CENTER_LEFT_1, XOR_CENTER_LEFT_2, XOR_CENTER_LEFT_3, XOR_CENTER_LEFT_4,
+    XOR_CENTER_RIGHT_1, XOR_CENTER_RIGHT_2, XOR_CENTER_RIGHT_3, XOR_CENTER_RIGHT_4,
+    XOR_LEFT_1_RIGHT_1, XOR_LEFT_2_RIGHT_2, XOR_LEFT_3_RIGHT_3,
+    XOR_LEFT_4_RIGHT_4, XOR_LEFT_5_RIGHT_5, XOR_LEFT_6_RIGHT_6
+};
+
+struct SensorPreset {
+    SensorTriggerMode mode;
+    SensorMask maskA;
+    SensorMask maskB;
+};
+
+SensorPreset getSensorPreset(SensorLogic logic);
+
 struct RuntimeInput {
     uint16_t sensorMask = 0;
     int32_t rightEncoder = 0;
