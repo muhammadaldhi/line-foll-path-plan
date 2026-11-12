@@ -78,6 +78,17 @@ public:
     RobotPlanner& forward(SensorLogic logic, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs);
     RobotPlanner& forward(SensorTriggerMode mode, uint16_t maskA, uint16_t maskB, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs);
 
+    RobotPlanner& backward(SensorLogic logic, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs);
+    RobotPlanner& backward(SensorTriggerMode mode, uint16_t maskA, uint16_t maskB, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs);
+
+    RobotPlanner& turnLeft(SensorLogic logic, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs);
+    RobotPlanner& turnLeft(SensorTriggerMode mode, uint16_t maskA, uint16_t maskB, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs);
+
+    RobotPlanner& turnRight(SensorLogic logic, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs);
+    RobotPlanner& turnRight(SensorTriggerMode mode, uint16_t maskA, uint16_t maskB, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs);
+
+    RobotPlanner& finish();
+
     RobotPlanner& afterForward(int16_t speedAfter, uint32_t delay2Ms);
     RobotPlanner& usePid(uint8_t profileIndex);
     RobotPlanner& lineMode(LineColor color);

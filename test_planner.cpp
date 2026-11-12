@@ -84,6 +84,26 @@ int main() {
     assert(configured.pidProfile == 1);
     assert(activeMemory().stopPlan == 2);
 
+    alwi.memory(0).step(2).backward(SensorLogic::OR_ALL, 150, 140, 100);
+    assert(activeMemory().steps[2].action == Action::MOVE_BWD);
+    assert(activeMemory().steps[2].sensorTriggerMode == SensorTriggerMode::OR);
+    assert(to_underlying(activeMemory().steps[2].sensorMaskA) == 0x3fff);
+    assert(activeMemory().steps[2].leftSpeed == 150 && activeMemory().steps[2].rightSpeed == 140);
+    assert(activeMemory().steps[2].counter == 100);
+
+    alwi.step(3).turnLeft(SensorLogic::OR_ALL, 120, 130, 200);
+    assert(activeMemory().steps[3].action == Action::TURN_LFT);
+    assert(activeMemory().steps[3].leftSpeed == 120 && activeMemory().steps[3].rightSpeed == 130);
+
+    alwi.step(4).turnRight(SensorLogic::OR_ALL, 130, 120, 300);
+    assert(activeMemory().steps[4].action == Action::TURN_RGT);
+    assert(activeMemory().steps[4].leftSpeed == 130 && activeMemory().steps[4].rightSpeed == 120);
+
+    alwi.step(5).finish();
+    assert(activeMemory().steps[5].action == Action::FINISH);
+    assert(activeMemory().steps[5].sensorTriggerMode == SensorTriggerMode::NONE);
+    assert(activeMemory().steps[5].leftSpeed == 0 && activeMemory().steps[5].rightSpeed == 0);
+
     initializeDefaultMemory(memory);
     PlannerRuntime runtime(memory);
     RuntimeInput input{};

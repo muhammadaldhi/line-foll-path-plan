@@ -150,6 +150,89 @@ RobotPlanner& RobotPlanner::forward(SensorTriggerMode mode, uint16_t maskA, uint
     return *this;
 }
 
+RobotPlanner& RobotPlanner::backward(SensorLogic logic, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs) {
+    SensorPreset preset = getSensorPreset(logic);
+    return backward(preset.mode, to_underlying(preset.maskA), to_underlying(preset.maskB), leftSpeed, rightSpeed, delayMs);
+}
+
+RobotPlanner& RobotPlanner::backward(SensorTriggerMode mode, uint16_t maskA, uint16_t maskB, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs) {
+    if (currentStep_ < STEP_COUNT) {
+        MemoryProgram& mem = activeMemory();
+        StepPlan& plan = mem.steps[currentStep_];
+        plan.action = Action::MOVE_BWD;
+        plan.sensorTriggerMode = mode;
+        plan.sensorMaskA = static_cast<SensorMask>(maskA);
+        plan.sensorMaskB = static_cast<SensorMask>(maskB);
+        plan.leftSpeed = leftSpeed;
+        plan.rightSpeed = rightSpeed;
+        plan.counterMode = CounterMode::TIMER;
+        plan.counter = delayMs;
+        markMemoryDirty(0);
+    }
+    return *this;
+}
+
+RobotPlanner& RobotPlanner::turnLeft(SensorLogic logic, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs) {
+    SensorPreset preset = getSensorPreset(logic);
+    return turnLeft(preset.mode, to_underlying(preset.maskA), to_underlying(preset.maskB), leftSpeed, rightSpeed, delayMs);
+}
+
+RobotPlanner& RobotPlanner::turnLeft(SensorTriggerMode mode, uint16_t maskA, uint16_t maskB, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs) {
+    if (currentStep_ < STEP_COUNT) {
+        MemoryProgram& mem = activeMemory();
+        StepPlan& plan = mem.steps[currentStep_];
+        plan.action = Action::TURN_LFT;
+        plan.sensorTriggerMode = mode;
+        plan.sensorMaskA = static_cast<SensorMask>(maskA);
+        plan.sensorMaskB = static_cast<SensorMask>(maskB);
+        plan.leftSpeed = leftSpeed;
+        plan.rightSpeed = rightSpeed;
+        plan.counterMode = CounterMode::TIMER;
+        plan.counter = delayMs;
+        markMemoryDirty(0);
+    }
+    return *this;
+}
+
+RobotPlanner& RobotPlanner::turnRight(SensorLogic logic, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs) {
+    SensorPreset preset = getSensorPreset(logic);
+    return turnRight(preset.mode, to_underlying(preset.maskA), to_underlying(preset.maskB), leftSpeed, rightSpeed, delayMs);
+}
+
+RobotPlanner& RobotPlanner::turnRight(SensorTriggerMode mode, uint16_t maskA, uint16_t maskB, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs) {
+    if (currentStep_ < STEP_COUNT) {
+        MemoryProgram& mem = activeMemory();
+        StepPlan& plan = mem.steps[currentStep_];
+        plan.action = Action::TURN_RGT;
+        plan.sensorTriggerMode = mode;
+        plan.sensorMaskA = static_cast<SensorMask>(maskA);
+        plan.sensorMaskB = static_cast<SensorMask>(maskB);
+        plan.leftSpeed = leftSpeed;
+        plan.rightSpeed = rightSpeed;
+        plan.counterMode = CounterMode::TIMER;
+        plan.counter = delayMs;
+        markMemoryDirty(0);
+    }
+    return *this;
+}
+
+RobotPlanner& RobotPlanner::finish() {
+    if (currentStep_ < STEP_COUNT) {
+        MemoryProgram& mem = activeMemory();
+        StepPlan& plan = mem.steps[currentStep_];
+        plan.action = Action::FINISH;
+        plan.sensorTriggerMode = SensorTriggerMode::NONE;
+        plan.sensorMaskA = SensorMask::NONE;
+        plan.sensorMaskB = SensorMask::NONE;
+        plan.leftSpeed = 0;
+        plan.rightSpeed = 0;
+        plan.counterMode = CounterMode::NONE;
+        plan.counter = 0;
+        markMemoryDirty(0);
+    }
+    return *this;
+}
+
 RobotPlanner& RobotPlanner::afterForward(int16_t speedAfter, uint32_t delay2Ms) {
     if (currentStep_ < STEP_COUNT) {
         MemoryProgram& mem = activeMemory();
