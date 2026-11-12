@@ -112,7 +112,12 @@ RobotPlanner& RobotPlanner::step(uint16_t stepIndex) {
 
 RobotPlanner& RobotPlanner::pid(uint8_t profileIndex, int16_t kp, int16_t ki, int16_t kd) {
     if (profileIndex < CALIBRATION_PROFILE_COUNT) {
+#ifdef ARDUINO
         pidController.setProfile(profileIndex, {kp, ki, kd});
+#else
+        (void)kp;
+        (void)kd;
+#endif
         if (currentStep_ < STEP_COUNT) {
             MemoryProgram& mem = activeMemory();
             mem.steps[currentStep_].pidProfile = profileIndex;
