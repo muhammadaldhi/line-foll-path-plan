@@ -216,6 +216,14 @@ RobotPlanner& RobotPlanner::turnRight(SensorTriggerMode mode, uint16_t maskA, ui
     return *this;
 }
 
+RobotPlanner& RobotPlanner::runForever() {
+    if (currentStep_ < STEP_COUNT) {
+        activeMemory().steps[currentStep_].runForever = true;
+        markMemoryDirty(0);
+    }
+    return *this;
+}
+
 RobotPlanner& RobotPlanner::finish() {
     if (currentStep_ < STEP_COUNT) {
         MemoryProgram& mem = activeMemory();
@@ -345,6 +353,21 @@ SensorPreset getSensorPreset(SensorLogic logic) {
 
 namespace {
 bool validMask(uint16_t mask) { return (mask & ~to_underlying(SensorMask::ALL)) == 0; }
+bool shouldExit(const StepPlan& step, uint32_t nowMs, int32_t rightEncoder, int32_t leftEncoder,
+                int32_t rightEncoderStart, int32_t leftEncoderStart, uint32_t actionStartedAt) {
+    if (step.runForever) return false;
+    if (step.counterMode == CounterMode::TIMER) {
+        return nowMs - actionStartedAt >= step.counter;
+    }
+    if (step.counterMode == CounterMode::ENCODERR) {
+        return (rightEncoder - rightEncoderStart) >= static_cast<int32_t>(step.counter);
+    }
+    if (step.counterMode == CounterMode::ENCODERL) {
+        return (leftEncoder - leftEncoderStart) >= static_cast<int32_t>(step.counter);
+    }
+    return false;
+}
+
 bool triggered(const StepPlan& step, uint16_t sensors) {
     const uint16_t a = to_underlying(step.sensorMaskA);
     const uint16_t b = to_underlying(step.sensorMaskB);
@@ -362,7 +385,7 @@ bool triggered(const StepPlan& step, uint16_t sensors) {
 PlannerRuntime::PlannerRuntime(const MemoryProgram& memory) : step_(0), memory_(&memory) {}
 void PlannerRuntime::reset(uint16_t step) { step_ = step; }
 uint16_t PlannerRuntime::currentStep() const { return step_; }
-RuntimeResult PlannerRuntime::step(const MemoryProgram& memory, const RuntimeInput& input) {
+RuntimeResult PlannerRuntime::step(const MemoryProgram& memory, const RuntimeInput& input, uint32_t nowMs) {
     RuntimeResult result;
     memory_ = &memory;
     if (input.emergencyStop) { result.status = RuntimeStatus::EMERGENCY_STOP; return result; }
@@ -374,6 +397,11 @@ RuntimeResult PlannerRuntime::step(const MemoryProgram& memory, const RuntimeInp
         result.status = RuntimeStatus::FAULT; return result;
     }
     if (!triggered(plan, input.sensorMask)) return result;
+    if (!actionActive_ && shouldExit(plan, nowMs, input.rightEncoder, input.leftEncoder, rightEncoderStart_, leftEncoderStart_, actionStartedAt_)) {
+        actionActive_ = true;
+        actionStartedAt_ = nowMs;
+        step_ = nextStepIndex(step_);
+    }
     result.command.action = plan.action;
     result.command.rightSpeed = plan.rightSpeed;
     result.command.leftSpeed = plan.leftSpeed;
@@ -394,7 +422,35 @@ RuntimeResult PlannerRuntime::step(const MemoryProgram& memory, const RuntimeInp
         result.targetMemory = plan.jumpTargetMemory; result.targetStep = plan.jumpTargetStep;
         step_ = plan.jumpTargetStep;
     } else {
+        if (plan.runForever) {
+        actionActive_ = true;
+        actionStartedAt_ = nowMs;
+        rightEncoderStart_ = input.rightEncoder;
+        leftEncoderStart_ = input.leftEncoder;
+        // Tetap di step yang sama untuk selama runForever
+    } else if (plan.counterMode == CounterMode::TIMER) {
+        if (nowMs - actionStartedAt_ >= plan.counter) {
+            actionActive_ = true;
+            actionStartedAt_ = nowMs;
+            step_ = nextStepIndex(step_);
+        }
+    } else if (plan.counterMode == CounterMode::ENCODERR) {
+        if ((input.rightEncoder - rightEncoderStart_) >= static_cast<int32_t>(plan.counter)) {
+            actionActive_ = true;
+            actionStartedAt_ = nowMs;
+            step_ = nextStepIndex(step_);
+        }
+    } else if (plan.counterMode == CounterMode::ENCODERL) {
+        if ((input.leftEncoder - leftEncoderStart_) >= static_cast<int32_t>(plan.counter)) {
+            actionActive_ = true;
+            actionStartedAt_ = nowMs;
+            step_ = nextStepIndex(step_);
+        }
+    } else {
+        actionActive_ = true;
+        actionStartedAt_ = nowMs;
         step_ = nextStepIndex(step_);
+    }
     }
     if (plan.action == Action::FINISH) result.status = RuntimeStatus::FINISHED;
     return result;

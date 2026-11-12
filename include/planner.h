@@ -88,6 +88,7 @@ public:
     RobotPlanner& turnRight(SensorTriggerMode mode, uint16_t maskA, uint16_t maskB, int16_t leftSpeed, int16_t rightSpeed, uint32_t delayMs);
 
     RobotPlanner& finish();
+    RobotPlanner& runForever();
 
     RobotPlanner& afterForward(int16_t speedAfter, uint32_t delay2Ms);
     RobotPlanner& usePid(uint8_t profileIndex);
@@ -107,11 +108,15 @@ class PlannerRuntime {
 public:
     explicit PlannerRuntime(const MemoryProgram& memory);
     void reset(uint16_t step = 0);
-    RuntimeResult step(const MemoryProgram& memory, const RuntimeInput& input);
+    RuntimeResult step(const MemoryProgram& memory, const RuntimeInput& input, uint32_t nowMs = 0);
     uint16_t currentStep() const;
 private:
     uint16_t step_;
     const MemoryProgram* memory_;
+    bool actionActive_ = false;
+    uint32_t actionStartedAt_ = 0;
+    int32_t rightEncoderStart_ = 0;
+    int32_t leftEncoderStart_ = 0;
 };
 
 #endif

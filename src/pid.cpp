@@ -4,7 +4,7 @@
 #include <array>
 
 std::array<PIDProfile, 5> PIDController::defaultProfiles() {
-    return {{{10, 0, 20}, {13, 0, 25}, {20, 0, 50}, {10, 0, 20}, {10, 0, 20}}};
+    return {{{10.0f, 0.0f, 20.0f}, {13.0f, 0.0f, 25.0f}, {20.0f, 0.0f, 50.0f}, {10.0f, 0.0f, 20.0f}, {10.0f, 0.0f, 20.0f}}};
 }
 
 PIDController::PIDController(std::array<PIDProfile, 5> profiles) : profiles_(profiles) {}
@@ -31,7 +31,7 @@ MotorCommand PIDController::update(uint16_t activeMask, FollowMode mode, uint8_t
     return update(activeMask, mode, profile, baseSpeed, p.ki);
 }
 
-MotorCommand PIDController::update(uint16_t activeMask, FollowMode mode, uint8_t profile, uint8_t baseSpeed, int16_t kiOverride) {
+MotorCommand PIDController::update(uint16_t activeMask, FollowMode mode, uint8_t profile, uint8_t baseSpeed, float kiOverride) {
     constexpr std::array<int16_t, SENSOR_COUNT> center{{-26,-22,-18,-14,-10,-5,-1,1,5,10,14,18,22,26}};
     constexpr std::array<int16_t, SENSOR_COUNT> right{{-46,-42,-38,-34,-30,-26,-22,-18,-14,-10,-5,-1,1,5}};
     constexpr std::array<int16_t, SENSOR_COUNT> left{{-5,-1,1,5,10,14,18,22,26,30,34,38,42,46}};
@@ -50,9 +50,9 @@ MotorCommand PIDController::update(uint16_t activeMask, FollowMode mode, uint8_t
     const int32_t error = sum / count;
     integral_ += error;
     const PIDProfile& p = profiles_[profile < profiles_.size() ? profile : 0];
-    const int32_t integralContribution = std::clamp<int32_t>(integral_ * static_cast<int32_t>(kiOverride), -100, 100);
+    const float integralContribution = std::clamp(static_cast<float>(integral_) * kiOverride, -100.0f, 100.0f);
     const int32_t derivative = error - lastError_;
-    const int32_t moveVal = error * p.kp + integralContribution + derivative * p.kd;
+    const float moveVal = static_cast<float>(error) * p.kp + integralContribution + static_cast<float>(derivative) * p.kd;
     lastError_ = error;
     hasLastError_ = true;
     const int32_t speed = static_cast<int32_t>(std::min<uint32_t>(baseSpeed, 100) * 255u / 100u);

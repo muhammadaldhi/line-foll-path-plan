@@ -35,6 +35,7 @@ struct StepPlan {
     int16_t pidKi;
     FollowMode followMode;
     bool jumpEnabled;
+    bool runForever;
     uint8_t jumpTargetMemory;
     uint16_t jumpTargetStep;
 };
@@ -52,7 +53,7 @@ inline void initializeDefaultStep(StepPlan& step) {
     step.valueA = 0; step.counterA = 0; step.counterAMode = CounterMode::NONE;
     step.valueB = 0; step.counterB = 0; step.counterBMode = CounterMode::NONE;
     step.pidProfile = 0; step.pidKi = 0; step.followMode = FollowMode::NONE;
-    step.jumpEnabled = false; step.jumpTargetMemory = 0; step.jumpTargetStep = 0;
+    step.jumpEnabled = false; step.runForever = false; step.jumpTargetMemory = 0; step.jumpTargetStep = 0;
 }
 inline void initializeDefaultMemory(MemoryProgram& memory) {
     memory.stopPlan = STEP_COUNT;

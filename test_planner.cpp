@@ -104,6 +104,9 @@ int main() {
     assert(activeMemory().steps[5].sensorTriggerMode == SensorTriggerMode::NONE);
     assert(activeMemory().steps[5].leftSpeed == 0 && activeMemory().steps[5].rightSpeed == 0);
 
+    alwi.memory(0).step(6).forward(SensorLogic::DIRECT, 200, 200, 0).runForever();
+    assert(activeMemory().steps[6].runForever);
+
     initializeDefaultMemory(memory);
     PlannerRuntime runtime(memory);
     RuntimeInput input{};
