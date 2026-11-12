@@ -68,6 +68,9 @@ class RobotPlanner {
 public:
     RobotPlanner();
 
+    void begin();
+    void loop();
+
     RobotPlanner& pid(uint8_t profileIndex, int16_t kp, int16_t ki, int16_t kd);
     RobotPlanner& memory(uint8_t memoryIndex);
     RobotPlanner& step(uint16_t stepIndex);
