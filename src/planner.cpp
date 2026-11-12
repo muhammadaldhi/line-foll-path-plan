@@ -111,12 +111,14 @@ RobotPlanner& RobotPlanner::step(uint16_t stepIndex) {
 }
 
 RobotPlanner& RobotPlanner::pid(uint8_t profileIndex, int16_t kp, int16_t ki, int16_t kd) {
-    if (profileIndex < CALIBRATION_PROFILE_COUNT && currentStep_ < STEP_COUNT) {
-        MemoryProgram& mem = activeMemory();
-        mem.steps[currentStep_].pidProfile = profileIndex;
-        mem.steps[currentStep_].pidKi = ki;
-        (void)kp; (void)kd;
-        markMemoryDirty(0);
+    if (profileIndex < CALIBRATION_PROFILE_COUNT) {
+        pidController.setProfile(profileIndex, {kp, ki, kd});
+        if (currentStep_ < STEP_COUNT) {
+            MemoryProgram& mem = activeMemory();
+            mem.steps[currentStep_].pidProfile = profileIndex;
+            mem.steps[currentStep_].pidKi = ki;
+            markMemoryDirty(0);
+        }
     }
     return *this;
 }

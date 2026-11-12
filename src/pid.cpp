@@ -9,6 +9,16 @@ std::array<PIDProfile, 5> PIDController::defaultProfiles() {
 
 PIDController::PIDController(std::array<PIDProfile, 5> profiles) : profiles_(profiles) {}
 
+bool PIDController::setProfile(uint8_t profile, PIDProfile values) {
+    if (profile >= profiles_.size()) return false;
+    profiles_[profile] = values;
+    return true;
+}
+
+PIDProfile PIDController::profile(uint8_t profile) const {
+    return profiles_[profile < profiles_.size() ? profile : 0];
+}
+
 void PIDController::reset() {
     integral_ = 0;
     lastError_ = 0;

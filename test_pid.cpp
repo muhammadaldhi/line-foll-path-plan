@@ -5,6 +5,9 @@
 
 static void test_centered_and_lost() {
     PIDController c;
+    assert(c.setProfile(4, {3, 4, 5}));
+    assert(!c.setProfile(5, {1, 2, 3}));
+    assert(c.profile(4).kp == 3 && c.profile(4).ki == 4 && c.profile(4).kd == 5);
     auto centered = c.update(0x3fff, FollowMode::CENTER, 0, 50);
     assert(centered.rightSpeed == centered.leftSpeed);
     assert(!centered.lineLost);

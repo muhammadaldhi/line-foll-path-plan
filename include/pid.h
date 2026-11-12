@@ -17,6 +17,8 @@ public:
     MotorCommand update(uint16_t activeMask, FollowMode mode, uint8_t profile, uint8_t baseSpeed,
                         uint32_t nowMs, uint32_t updateIntervalMs);
     void reset();
+    bool setProfile(uint8_t profile, PIDProfile values);
+    PIDProfile profile(uint8_t profile) const;
 private:
     std::array<PIDProfile, 5> profiles_;
     int32_t integral_ = 0;
