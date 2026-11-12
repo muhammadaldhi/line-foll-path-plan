@@ -10,15 +10,15 @@ struct MotorCommand { int16_t rightSpeed; int16_t leftSpeed; bool lineLost; };
 
 class PIDController {
 public:
-    static std::array<PIDProfile, 3> defaultProfiles();
-    explicit PIDController(std::array<PIDProfile, 3> profiles = defaultProfiles());
+    static std::array<PIDProfile, 5> defaultProfiles();
+    explicit PIDController(std::array<PIDProfile, 5> profiles = defaultProfiles());
     MotorCommand update(uint16_t activeMask, FollowMode mode, uint8_t profile, uint8_t baseSpeed);
     MotorCommand update(uint16_t activeMask, FollowMode mode, uint8_t profile, uint8_t baseSpeed, int16_t kiOverride);
     MotorCommand update(uint16_t activeMask, FollowMode mode, uint8_t profile, uint8_t baseSpeed,
                         uint32_t nowMs, uint32_t updateIntervalMs);
     void reset();
 private:
-    std::array<PIDProfile, 3> profiles_;
+    std::array<PIDProfile, 5> profiles_;
     int32_t integral_ = 0;
     int32_t lastError_ = 0;
     bool hasLastError_ = false;

@@ -1,9 +1,99 @@
 #include "planner.h"
 #include "menu.h"
 
+#ifdef ARDUINO
+#include <Arduino.h>
+#include "buttons.h"
+#include "display.h"
+#include "encoder.h"
+#include "motors.h"
+#include "pid.h"
+#include "sensors.h"
+#include "storage.h"
+namespace {
+Display display;
+PIDController pidController;
+EncoderController encoderController;
+uint32_t lastPidTime = 0;
+constexpr uint32_t PID_INTERVAL_MS = 5;
+int buttonInput(Button button) { return static_cast<int>(button); }
+uint16_t activeMaskFromValues(const SensorValues& values) {
+    uint16_t mask = 0;
+    for (uint8_t i = 0; i < SENSOR_COUNT; ++i) {
+        if (values[i] != 0) mask |= static_cast<uint16_t>(1u << i);
+    }
+    return mask;
+}
+}
+#endif
+
 RobotPlanner alwi;
 
 RobotPlanner::RobotPlanner() : currentMemory_(0), currentStep_(0) {}
+
+void RobotPlanner::begin() {
+#ifdef ARDUINO
+    initializeStorage();
+    configureMemoryEditor({
+        [](uint8_t index, MemoryProgram& memory) { return loadMemory(index, memory); },
+        [](uint8_t index, const MemoryProgram& memory) { return saveMemory(index, memory); }
+    });
+    initializeMotors();
+    initializeSensors();
+    initializeButtons();
+    display.initialize();
+    lastPidTime = millis();
+#endif
+}
+
+void RobotPlanner::loop() {
+#ifdef ARDUINO
+    const uint32_t now = millis();
+    static MenuState menuState{};
+    static PlannerRuntime planner(activeMemory());
+    static bool started = false;
+
+    processMenuInput(menuState, buttonInput(readButtons()));
+    autosaveTick(now);
+
+    const SensorValues sensors = readSensors();
+    uint16_t sensorValues[SENSOR_COUNT] = {};
+    for (uint8_t i = 0; i < SENSOR_COUNT; ++i) sensorValues[i] = sensors[i];
+    const MainScreenValues screenValues{
+        menuState.indexMemory, menuState.indexCP, menuState.indexPlan, menuState.indexStopPlan
+    };
+    display.renderMainScreen(menuState.position, sensorValues, screenValues);
+
+    if (menuState.position == MenuPosition::RUN_CHECKPOINT) {
+        if (!started) {
+            planner.reset();
+            pidController.reset();
+            started = true;
+        }
+        RuntimeInput input;
+        input.sensorMask = activeMaskFromValues(sensors);
+        input.rightEncoder = encoderController.rightCount();
+        input.leftEncoder = encoderController.leftCount();
+        const RuntimeResult result = planner.step(activeMemory(), input);
+        if (result.status == RuntimeStatus::RUNNING && now - lastPidTime >= PID_INTERVAL_MS) {
+            const RuntimeCommand& command = result.command;
+            const uint8_t baseSpeed = static_cast<uint8_t>((command.rightSpeed + command.leftSpeed) / 2);
+            const MotorCommand motor = pidController.update(
+                input.sensorMask, command.followMode, command.pidProfile, baseSpeed, now, PID_INTERVAL_MS);
+            if (motor.lineLost) hardwareMotors().stop();
+            else hardwareMotors().drive(motor.rightSpeed, motor.leftSpeed);
+            lastPidTime = now;
+        } else if (result.status != RuntimeStatus::RUNNING) {
+            hardwareMotors().stop();
+            started = false;
+        }
+    } else {
+        hardwareMotors().stop();
+        started = false;
+    }
+    delay(2);
+#endif
+}
 
 RobotPlanner& RobotPlanner::memory(uint8_t memoryIndex) {
     if (memoryIndex < MEMORY_COUNT) {
@@ -21,7 +111,7 @@ RobotPlanner& RobotPlanner::step(uint16_t stepIndex) {
 }
 
 RobotPlanner& RobotPlanner::pid(uint8_t profileIndex, int16_t kp, int16_t ki, int16_t kd) {
-    if (profileIndex < 3 && currentStep_ < STEP_COUNT) {
+    if (profileIndex < CALIBRATION_PROFILE_COUNT && currentStep_ < STEP_COUNT) {
         MemoryProgram& mem = activeMemory();
         mem.steps[currentStep_].pidProfile = profileIndex;
         mem.steps[currentStep_].pidKi = ki;

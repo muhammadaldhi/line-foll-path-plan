@@ -19,7 +19,7 @@ static void test_weights_and_none() {
     c.reset();
     auto none = c.update(1u << 13, FollowMode::NONE, 0, 50);
     auto explicitCenter = PIDController().update(1u << 13, FollowMode::CENTER, 0, 50);
-    std::array<PIDProfile, 3> noTerms{{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}};
+    std::array<PIDProfile, 5> noTerms{{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}};
     PIDController kiController(noTerms);
     kiController.update(1u << 13, FollowMode::CENTER, 0, 10, 0);
     auto baseline = kiController.update(1u << 13, FollowMode::CENTER, 0, 10, 0);
@@ -30,7 +30,7 @@ static void test_weights_and_none() {
     assert(none.rightSpeed == explicitCenter.rightSpeed && none.leftSpeed == explicitCenter.leftSpeed);
 }
 static void test_pid_terms_profiles_and_reset() {
-    std::array<PIDProfile, 3> p{{{0, 1, 0}, {10, 0, 0}, {0, 0, 10}}};
+    std::array<PIDProfile, 5> p{{{0, 1, 0}, {10, 0, 0}, {0, 0, 10}, {0, 0, 0}, {0, 0, 0}}};
     PIDController c(p);
     auto first = c.update(1u << 6, FollowMode::CENTER, 0, 0);
     auto second = c.update(1u << 6, FollowMode::CENTER, 0, 0);
@@ -53,13 +53,13 @@ static void test_pid_terms_profiles_and_reset() {
     assert(a.rightSpeed == b.rightSpeed && a.leftSpeed == b.leftSpeed);
 }
 static void test_first_valid_update_uses_legacy_zero_last_error_for_derivative() {
-    std::array<PIDProfile, 3> p{{{0, 0, 1}, {0, 0, 0}, {0, 0, 0}}};
+    std::array<PIDProfile, 5> p{{{0, 0, 1}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}};
     PIDController c(p);
     auto first = c.update(1u << 13, FollowMode::CENTER, 0, 0);
     assert(first.rightSpeed == 26 && first.leftSpeed == -26);
 }
 static void test_timed_updates() {
-    std::array<PIDProfile, 3> p{{{1, 1, 0}, {0, 0, 0}, {0, 0, 0}}};
+    std::array<PIDProfile, 5> p{{{1, 1, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}}};
     PIDController c(p);
     auto first = c.update(1u << 13, FollowMode::CENTER, 0, 0, 100, 10);
     auto early = c.update(1u << 13, FollowMode::CENTER, 0, 0, 105, 10);
@@ -85,7 +85,7 @@ static void test_mapping_and_clamps() {
     auto full = c.update(0x3fff, FollowMode::CENTER, 0, 100);
     assert(zero.rightSpeed == 0 && zero.leftSpeed == 0);
     assert(full.rightSpeed == 255 && full.leftSpeed == 255);
-    std::array<PIDProfile, 3> huge{{{1000, 1000, 1000}, {0,0,0}, {0,0,0}}};
+    std::array<PIDProfile, 5> huge{{{1000, 1000, 1000}, {0,0,0}, {0,0,0}, {0,0,0}, {0,0,0}}};
     PIDController h(huge);
     auto out = h.update(1u << 13, FollowMode::CENTER, 0, 100);
     assert(out.rightSpeed >= -255 && out.rightSpeed <= 255);

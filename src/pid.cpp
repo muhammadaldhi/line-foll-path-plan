@@ -3,11 +3,11 @@
 #include <algorithm>
 #include <array>
 
-std::array<PIDProfile, 3> PIDController::defaultProfiles() {
-    return {{{10, 0, 20}, {13, 0, 25}, {20, 0, 50}}};
+std::array<PIDProfile, 5> PIDController::defaultProfiles() {
+    return {{{10, 0, 20}, {13, 0, 25}, {20, 0, 50}, {10, 0, 20}, {10, 0, 20}}};
 }
 
-PIDController::PIDController(std::array<PIDProfile, 3> profiles) : profiles_(profiles) {}
+PIDController::PIDController(std::array<PIDProfile, 5> profiles) : profiles_(profiles) {}
 
 void PIDController::reset() {
     integral_ = 0;
